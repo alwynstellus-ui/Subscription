@@ -17,12 +17,18 @@ const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
 export default clerkMiddleware(async (auth, request) => {
   // Protect all routes except public ones
   if (!isPublicRoute(request)) {
-    await auth.protect();
+    await auth.protect({
+      unauthenticatedUrl: "/sign-in",
+      unauthorizedUrl: "/sign-in",
+    });
   }
 
   // Admin routes require admin role (additional check in page)
   if (isAdminRoute(request)) {
-    await auth.protect();
+    await auth.protect({
+      unauthenticatedUrl: "/sign-in",
+      unauthorizedUrl: "/",
+    });
   }
 });
 
