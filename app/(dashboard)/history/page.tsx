@@ -4,6 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Mail, Eye, MousePointer } from "lucide-react";
 import { format } from "date-fns";
 
+export const dynamic = 'force-dynamic';
+
 export default async function HistoryPage() {
   const result = await getCampaignHistory();
 

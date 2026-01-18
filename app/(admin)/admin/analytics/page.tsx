@@ -4,6 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { BarChart, TrendingUp, Mail, Eye, MousePointer, XCircle } from "lucide-react";
 
+export const dynamic = 'force-dynamic';
+
 export default async function AnalyticsPage() {
   const result = await getAllCampaigns();
   const campaigns = result.success ? result.data?.filter((c: any) => c.status === "sent") : [];

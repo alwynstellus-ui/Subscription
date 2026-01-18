@@ -4,6 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { CheckCircle2, Mail, Calendar } from "lucide-react";
 import { format } from "date-fns";
 
+export const dynamic = 'force-dynamic';
+
 export default async function DashboardPage() {
   const result = await getUserSubscription();
 

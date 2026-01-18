@@ -6,6 +6,8 @@ import { format } from "date-fns";
 import Link from "next/link";
 import { Plus, Mail } from "lucide-react";
 
+export const dynamic = 'force-dynamic';
+
 export default async function CampaignsPage() {
   const result = await getAllCampaigns();
 
