@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getUserPreferences, updateUserPreferences } from "@/lib/actions/user-actions";
+import { getUserPreferences, updateUserPreferences, getUserSubscription, updateSubscriptionDuration } from "@/lib/actions/user-actions";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { SubscriptionDurationSlider } from "@/components/dashboard/subscription-duration-slider";
 
 interface Preference {
   id: string;
@@ -21,11 +22,13 @@ const categoryDescriptions: Record<string, string> = {
 
 export default function PreferencesPage() {
   const [preferences, setPreferences] = useState<Preference[]>([]);
+  const [subscriptionDuration, setSubscriptionDuration] = useState<number>(12);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     loadPreferences();
+    loadSubscription();
   }, []);
 
   const loadPreferences = async () => {
@@ -36,6 +39,13 @@ export default function PreferencesPage() {
       toast.error(result.error || "Failed to load preferences");
     }
     setLoading(false);
+  };
+
+  const loadSubscription = async () => {
+    const result = await getUserSubscription();
+    if (result.success && result.data) {
+      setSubscriptionDuration(result.data.subscription_duration_months || 12);
+    }
   };
 
   const handleToggle = (category: string) => {
@@ -94,6 +104,27 @@ export default function PreferencesPage() {
           Customize your newsletter subscription
         </p>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Subscription Duration</CardTitle>
+          <CardDescription>
+            Choose your preferred subscription length
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <SubscriptionDurationSlider
+            initialDuration={subscriptionDuration}
+            onSave={async (months) => {
+              const result = await updateSubscriptionDuration(months);
+              if (result.success) {
+                setSubscriptionDuration(months);
+              }
+              return result;
+            }}
+          />
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>

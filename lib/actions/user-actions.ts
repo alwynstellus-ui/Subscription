@@ -127,6 +127,56 @@ export async function updateUserPreferences(preferences: Record<string, boolean>
   }
 }
 
+export async function updateSubscriptionDuration(durationMonths: number) {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return { success: false, error: "Not authenticated" };
+    }
+
+    // Validate duration
+    const validDurations = [3, 6, 9, 12, 24, 60];
+    if (!validDurations.includes(durationMonths)) {
+      return { success: false, error: "Invalid duration" };
+    }
+
+    const supabase = createServerSupabaseClient();
+
+    // Get subscriber
+    const { data: subscriber } = await supabase
+      .from("subscribers")
+      .select("id")
+      .eq("user_id", user.id)
+      .single();
+
+    if (!subscriber) {
+      return { success: false, error: "No subscription found" };
+    }
+
+    // Update duration
+    const { error } = await supabase
+      .from("subscribers")
+      .update({ subscription_duration_months: durationMonths })
+      .eq("id", subscriber.id);
+
+    if (error) {
+      console.error("Error updating duration:", error);
+      return { success: false, error: "Failed to update duration" };
+    }
+
+    return {
+      success: true,
+      message: "Subscription duration updated successfully",
+    };
+  } catch (error) {
+    console.error("Update duration error:", error);
+    return {
+      success: false,
+      error: "An unexpected error occurred",
+    };
+  }
+}
+
 export async function getCampaignHistory() {
   try {
     const user = await getCurrentUser();
