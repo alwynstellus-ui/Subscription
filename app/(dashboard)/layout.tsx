@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
 import { requireAuth } from "@/lib/clerk/auth";
-import { Home, Settings, History, Mail } from "lucide-react";
+import { Home, Settings, History, Mail, CreditCard } from "lucide-react";
 
 export default async function DashboardLayout({
   children,
@@ -40,6 +40,13 @@ export default async function DashboardLayout({
           >
             <History className="h-5 w-5" />
             <span>History</span>
+          </Link>
+          <Link
+            href="/subscriptions"
+            className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-muted transition-colors"
+          >
+            <CreditCard className="h-5 w-5" />
+            <span>Subscriptions</span>
           </Link>
         </nav>
       </aside>
