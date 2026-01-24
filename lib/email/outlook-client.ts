@@ -12,10 +12,25 @@ export interface OutlookAuthResponse {
 }
 
 /**
+ * Check if Outlook is configured
+ */
+export function isOutlookConfigured(): boolean {
+  return !!(
+    process.env.NEXT_PUBLIC_OUTLOOK_CLIENT_ID &&
+    process.env.OUTLOOK_CLIENT_SECRET &&
+    process.env.NEXT_PUBLIC_APP_URL
+  );
+}
+
+/**
  * Initialize Microsoft OAuth flow
  */
 export function getOutlookAuthUrl(): string {
-  const clientId = process.env.NEXT_PUBLIC_OUTLOOK_CLIENT_ID || '';
+  if (!isOutlookConfigured()) {
+    throw new Error('Outlook API is not configured. Please set up OUTLOOK_CLIENT_ID and OUTLOOK_CLIENT_SECRET environment variables.');
+  }
+
+  const clientId = process.env.NEXT_PUBLIC_OUTLOOK_CLIENT_ID!;
   const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/outlook/callback`;
 
   const scopes = ['Mail.Read', 'offline_access'].join(' ');

@@ -7,8 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { Mail, Trash2, RefreshCw, CheckCircle2, AlertCircle, Loader2, Plus } from "lucide-react";
 import { getEmailConnections, deleteEmailConnection, scanEmailsForSubscriptions, type EmailConnection } from "@/lib/actions/email-connection-actions";
 import { addUserSubscription } from "@/lib/actions/subscription-tracker-actions";
-import { getGmailAuthUrl } from "@/lib/email/gmail-client";
-import { getOutlookAuthUrl } from "@/lib/email/outlook-client";
+import { getGmailAuthUrl, isGmailConfigured } from "@/lib/email/gmail-client";
+import { getOutlookAuthUrl, isOutlookConfigured } from "@/lib/email/outlook-client";
 import { toast } from "sonner";
 import { ParsedSubscription } from "@/lib/email/subscription-parser";
 
@@ -18,9 +18,22 @@ export function EmailConnectionManager() {
   const [scanning, setScanning] = useState<string | null>(null);
   const [scannedResults, setScannedResults] = useState<ParsedSubscription[]>([]);
   const [adding, setAdding] = useState<string | null>(null);
+  const [gmailConfigured, setGmailConfigured] = useState(false);
+  const [outlookConfigured, setOutlookConfigured] = useState(false);
 
   useEffect(() => {
     loadConnections();
+    // Check if APIs are configured (client-side check)
+    fetch('/api/check-email-config')
+      .then(r => r.json())
+      .then(data => {
+        setGmailConfigured(data.gmail || false);
+        setOutlookConfigured(data.outlook || false);
+      })
+      .catch(() => {
+        setGmailConfigured(false);
+        setOutlookConfigured(false);
+      });
   }, []);
 
   const loadConnections = async () => {
@@ -35,13 +48,21 @@ export function EmailConnectionManager() {
   };
 
   const handleConnectGmail = () => {
-    const authUrl = getGmailAuthUrl();
-    window.location.href = authUrl;
+    try {
+      const authUrl = getGmailAuthUrl();
+      window.location.href = authUrl;
+    } catch (error: any) {
+      toast.error(error.message || "Gmail API is not configured");
+    }
   };
 
   const handleConnectOutlook = () => {
-    const authUrl = getOutlookAuthUrl();
-    window.location.href = authUrl;
+    try {
+      const authUrl = getOutlookAuthUrl();
+      window.location.href = authUrl;
+    } catch (error: any) {
+      toast.error(error.message || "Outlook API is not configured");
+    }
   };
 
   const handleDisconnect = async (connectionId: string) => {
@@ -144,15 +165,42 @@ export function EmailConnectionManager() {
               Connect Gmail or Outlook to automatically scan for subscription emails
             </CardDescription>
           </CardHeader>
-          <CardContent className="flex gap-4">
-            <Button onClick={handleConnectGmail} className="flex-1">
-              <Mail className="h-4 w-4 mr-2" />
-              Connect Gmail
-            </Button>
-            <Button onClick={handleConnectOutlook} variant="outline" className="flex-1">
-              <Mail className="h-4 w-4 mr-2" />
-              Connect Outlook
-            </Button>
+          <CardContent className="space-y-4">
+            {!gmailConfigured && !outlookConfigured && (
+              <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-md">
+                <div className="flex items-start gap-2">
+                  <AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5" />
+                  <div className="text-sm text-yellow-800">
+                    <strong>Email integration not configured yet.</strong>
+                    <p className="mt-1">
+                      The administrator needs to set up Gmail and Outlook API credentials.
+                      In the meantime, you can use the "Manual Scan" tab to paste email content directly.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+            <div className="flex gap-4">
+              <Button
+                onClick={handleConnectGmail}
+                className="flex-1"
+                disabled={!gmailConfigured}
+              >
+                <Mail className="h-4 w-4 mr-2" />
+                Connect Gmail
+                {!gmailConfigured && " (Not Configured)"}
+              </Button>
+              <Button
+                onClick={handleConnectOutlook}
+                variant="outline"
+                className="flex-1"
+                disabled={!outlookConfigured}
+              >
+                <Mail className="h-4 w-4 mr-2" />
+                Connect Outlook
+                {!outlookConfigured && " (Not Configured)"}
+              </Button>
+            </div>
           </CardContent>
         </Card>
       )}

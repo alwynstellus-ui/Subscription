@@ -18,10 +18,25 @@ export interface GmailAuthResponse {
 }
 
 /**
+ * Check if Gmail is configured
+ */
+export function isGmailConfigured(): boolean {
+  return !!(
+    process.env.NEXT_PUBLIC_GMAIL_CLIENT_ID &&
+    process.env.GMAIL_CLIENT_SECRET &&
+    process.env.NEXT_PUBLIC_APP_URL
+  );
+}
+
+/**
  * Initialize Gmail OAuth flow
  */
 export function getGmailAuthUrl(): string {
-  const clientId = process.env.NEXT_PUBLIC_GMAIL_CLIENT_ID || '';
+  if (!isGmailConfigured()) {
+    throw new Error('Gmail API is not configured. Please set up GMAIL_CLIENT_ID and GMAIL_CLIENT_SECRET environment variables.');
+  }
+
+  const clientId = process.env.NEXT_PUBLIC_GMAIL_CLIENT_ID!;
   const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/gmail/callback`;
 
   const scopes = [
