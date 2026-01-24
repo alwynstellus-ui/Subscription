@@ -2,7 +2,14 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { resend, checkResendConfig } from "./resend";
 
 const fromEmail = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
-const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+
+function getAppUrl(): string {
+  const url = process.env.NEXT_PUBLIC_APP_URL;
+  if (!url) {
+    throw new Error("NEXT_PUBLIC_APP_URL environment variable is required for email links");
+  }
+  return url;
+}
 
 export async function sendCampaignEmails(campaignId: string) {
   try {
@@ -84,7 +91,7 @@ export async function sendCampaignEmails(campaignId: string) {
             .eq("id", subscriber.id)
             .single();
 
-          const unsubscribeUrl = `${appUrl}/unsubscribe?token=${subData?.unsubscribe_token}`;
+          const unsubscribeUrl = `${getAppUrl()}/unsubscribe?token=${subData?.unsubscribe_token}`;
 
           // Add unsubscribe link to content
           const contentWithUnsubscribe = `

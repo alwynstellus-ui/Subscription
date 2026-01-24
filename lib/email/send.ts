@@ -4,7 +4,14 @@ import { ConfirmationEmail } from "./templates/confirmation";
 import { WelcomeEmail } from "./templates/welcome";
 
 const fromEmail = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
-const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+
+function getAppUrl(): string {
+  const url = process.env.NEXT_PUBLIC_APP_URL;
+  if (!url) {
+    throw new Error("NEXT_PUBLIC_APP_URL environment variable is required for email links");
+  }
+  return url;
+}
 
 function ensureConfigured() {
   checkResendConfig();
@@ -13,7 +20,7 @@ function ensureConfigured() {
 export async function sendConfirmationEmail(email: string, token: string) {
   ensureConfigured();
 
-  const confirmationUrl = `${appUrl}/confirm?token=${token}`;
+  const confirmationUrl = `${getAppUrl()}/confirm?token=${token}`;
 
   const html = await render(
     ConfirmationEmail({ email, confirmationUrl })
@@ -42,7 +49,7 @@ export async function sendConfirmationEmail(email: string, token: string) {
 export async function sendWelcomeEmail(email: string, hasAccount: boolean) {
   ensureConfigured();
 
-  const dashboardUrl = hasAccount ? `${appUrl}/dashboard` : undefined;
+  const dashboardUrl = hasAccount ? `${getAppUrl()}/dashboard` : undefined;
 
   const html = await render(
     WelcomeEmail({ email, dashboardUrl })

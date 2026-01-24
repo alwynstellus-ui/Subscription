@@ -54,6 +54,12 @@ CREATE POLICY "Users can delete their own subscriptions"
   FOR DELETE
   USING (auth.uid()::text = (SELECT clerk_user_id FROM users WHERE id = user_subscriptions.user_id));
 
+-- Service role has full access (for server-side operations via Clerk auth)
+CREATE POLICY "Service role has full access to user_subscriptions"
+  ON user_subscriptions
+  FOR ALL
+  USING (auth.role() = 'service_role');
+
 -- Function to update updated_at timestamp
 CREATE OR REPLACE FUNCTION update_user_subscriptions_updated_at()
 RETURNS TRIGGER AS $$

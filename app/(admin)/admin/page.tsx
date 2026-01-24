@@ -1,6 +1,7 @@
 import { getSubscriberStats } from "@/lib/actions/admin-actions";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, UserPlus, UserX, UserCheck } from "lucide-react";
+import Link from "next/link";
 
 export const dynamic = 'force-dynamic';
 
@@ -98,7 +99,7 @@ export default async function AdminDashboardPage() {
             <CardDescription>Common administrative tasks</CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
-            <a
+            <Link
               href="/admin/subscribers"
               className="block p-3 rounded-md hover:bg-muted transition-colors"
             >
@@ -106,8 +107,8 @@ export default async function AdminDashboardPage() {
               <p className="text-sm text-muted-foreground">
                 View, search, and export subscriber list
               </p>
-            </a>
-            <a
+            </Link>
+            <Link
               href="/admin/campaigns/new"
               className="block p-3 rounded-md hover:bg-muted transition-colors"
             >
@@ -115,8 +116,8 @@ export default async function AdminDashboardPage() {
               <p className="text-sm text-muted-foreground">
                 Send a new newsletter to your subscribers
               </p>
-            </a>
-            <a
+            </Link>
+            <Link
               href="/admin/analytics"
               className="block p-3 rounded-md hover:bg-muted transition-colors"
             >
@@ -124,7 +125,7 @@ export default async function AdminDashboardPage() {
               <p className="text-sm text-muted-foreground">
                 Track campaign performance and engagement
               </p>
-            </a>
+            </Link>
           </CardContent>
         </Card>
 
