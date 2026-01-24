@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Plus, Trash2, Edit, TrendingUp, Calendar, DollarSign } from "lucide-react";
+import { Plus, Trash2, Edit, TrendingUp, Calendar, DollarSign, Scan } from "lucide-react";
 import { format } from "date-fns";
 import Link from "next/link";
 
@@ -89,12 +89,20 @@ export default function SubscriptionsPage() {
             Track and manage all your subscriptions in one place
           </p>
         </div>
-        <Button asChild>
-          <Link href="/subscriptions/new">
-            <Plus className="h-4 w-4 mr-2" />
-            Add Subscription
-          </Link>
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" asChild>
+            <Link href="/subscriptions/scan">
+              <Scan className="h-4 w-4 mr-2" />
+              Scan Email
+            </Link>
+          </Button>
+          <Button asChild>
+            <Link href="/subscriptions/new">
+              <Plus className="h-4 w-4 mr-2" />
+              Add Manually
+            </Link>
+          </Button>
+        </div>
       </div>
 
       {/* Stats Cards */}
