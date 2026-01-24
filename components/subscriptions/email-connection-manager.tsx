@@ -166,41 +166,29 @@ export function EmailConnectionManager() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {!gmailConfigured && !outlookConfigured && (
-              <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-md">
+            {!gmailConfigured && (
+              <div className="p-4 bg-blue-50 border border-blue-200 rounded-md">
                 <div className="flex items-start gap-2">
-                  <AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5" />
-                  <div className="text-sm text-yellow-800">
-                    <strong>Email integration not configured yet.</strong>
+                  <AlertCircle className="h-5 w-5 text-blue-600 mt-0.5" />
+                  <div className="text-sm text-blue-800">
+                    <strong>Gmail API Setup Required</strong>
                     <p className="mt-1">
-                      The administrator needs to set up Gmail and Outlook API credentials.
-                      In the meantime, you can use the "Manual Scan" tab to paste email content directly.
+                      To enable automatic email scanning, the administrator needs to configure Gmail API credentials.
+                      See EMAIL_SETUP.md in the project for instructions.
                     </p>
                   </div>
                 </div>
               </div>
             )}
-            <div className="flex gap-4">
-              <Button
-                onClick={handleConnectGmail}
-                className="flex-1"
-                disabled={!gmailConfigured}
-              >
-                <Mail className="h-4 w-4 mr-2" />
-                Connect Gmail
-                {!gmailConfigured && " (Not Configured)"}
-              </Button>
-              <Button
-                onClick={handleConnectOutlook}
-                variant="outline"
-                className="flex-1"
-                disabled={!outlookConfigured}
-              >
-                <Mail className="h-4 w-4 mr-2" />
-                Connect Outlook
-                {!outlookConfigured && " (Not Configured)"}
-              </Button>
-            </div>
+            <Button
+              onClick={handleConnectGmail}
+              className="w-full"
+              disabled={!gmailConfigured}
+              size="lg"
+            >
+              <Mail className="h-5 w-5 mr-2" />
+              {gmailConfigured ? "Connect Gmail Account" : "Gmail Not Configured"}
+            </Button>
           </CardContent>
         </Card>
       )}
